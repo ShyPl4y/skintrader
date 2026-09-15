@@ -44,32 +44,37 @@ def extract_price_data(item: dict) -> dict:
     }
 
 
+def _skinport_slug(name: str) -> str:
+    return name.lower().replace(' ', '-').replace('|', '').replace('--', '-')
+
+
 def build_marketplaces(item: dict) -> list[dict]:
     name = item.get("market_hash_name", "")
     min_p = item.get("min_price")
     max_p = item.get("max_price")
     mean_p = item.get("mean_price")
+    slug = _skinport_slug(name)
     result = []
 
     if min_p is not None:
         result.append({
             "name": "Skinport (mais barato)",
             "price": min_p,
-            "url": f"https://skinport.com/item/{name.lower().replace(' ', '-')}",
+            "url": f"https://skinport.com/item/{slug}",
             "type": "min",
         })
     if max_p is not None:
         result.append({
             "name": "Skinport (mais caro)",
             "price": max_p,
-            "url": f"https://skinport.com/item/{name.lower().replace(' ', '-')}",
+            "url": f"https://skinport.com/item/{slug}",
             "type": "max",
         })
     if mean_p is not None and mean_p != min_p and mean_p != max_p:
         result.append({
             "name": "Skinport (preço médio)",
             "price": mean_p,
-            "url": f"https://skinport.com/item/{name.lower().replace(' ', '-')}",
+            "url": f"https://skinport.com/item/{slug}",
             "type": "mean",
         })
 
