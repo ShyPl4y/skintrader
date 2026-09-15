@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: skintrader-api
+    runtime: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: skintrader-db
+          property: connectionString
+
+  - type: web
+    name: skintrader-ui
+    runtime: static
+    region: frankfurt
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    envVars:
+      - key: VITE_API_URL
+        value: https://skintrader-api.onrender.com/api
+
+databases:
+  - name: skintrader-db
+    databaseName: skintrader
+    plan: free
+    region: frankfurt
