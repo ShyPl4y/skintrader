@@ -75,22 +75,24 @@ async def top_spreads(limit: int = 10):
     results = []
     for item in items:
         data = extract_price_data(item)
-        if (
-            data["min_price"] and data["max_price"]
-            and data["max_price"] > data["min_price"]
-            and data["max_price"] < data["min_price"] * 200
-            and (data.get("volume") or 0) > 0
-        ):
+        if data["min_price"] and data["max_price"] and data["max_price"] > data["min_price"]:
+            spread_value = round(data["max_price"] - data["min_price"], 2)
             spread_pct = ((data["max_price"] - data["min_price"]) / data["min_price"]) * 100
-            results.append({
-                "market_hash_name": data["market_hash_name"],
-                "min_price": data["min_price"],
-                "max_price": data["max_price"],
-                "mean_price": data.get("mean_price"),
-                "spread_pct": round(spread_pct, 1),
-                "spread_value": round(data["max_price"] - data["min_price"], 2),
-                "volume": data["volume"],
-            })
+            if (
+                data["min_price"] >= 2
+                and data["max_price"] < data["min_price"] * 10
+                and spread_value >= 1
+                and (data.get("volume") or 0) > 0
+            ):
+                results.append({
+                    "market_hash_name": data["market_hash_name"],
+                    "min_price": data["min_price"],
+                    "max_price": data["max_price"],
+                    "mean_price": data.get("mean_price"),
+                    "spread_pct": round(spread_pct, 1),
+                    "spread_value": spread_value,
+                    "volume": data["volume"],
+                })
     results.sort(key=lambda r: r["spread_pct"], reverse=True)
     return results[:limit]
 
