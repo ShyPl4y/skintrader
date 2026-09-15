@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
-from skinport import get_prices, extract_price_data
+from skinport import get_prices, extract_price_data, build_marketplaces
 from database import init_db, add_flip, list_flips, delete_flip, flip_stats
 
 
@@ -80,7 +80,6 @@ async def top_spreads(limit: int = 10):
             spread_pct = ((data["max_price"] - data["min_price"]) / data["min_price"]) * 100
             if (
                 data["min_price"] >= 2
-                and data["max_price"] < data["min_price"] * 10
                 and spread_value >= 1
                 and (data.get("volume") or 0) > 0
             ):
@@ -117,7 +116,9 @@ async def skin_detail(name: str):
     items = await get_prices()
     for item in items:
         if item.get("market_hash_name", "").lower() == name.lower():
-            return extract_price_data(item)
+            data = extract_price_data(item)
+            data["marketplaces"] = build_marketplaces(data)
+            return data
     return {"error": "Skin not found", "search": name}
 
 

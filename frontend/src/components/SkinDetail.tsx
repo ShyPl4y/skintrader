@@ -143,6 +143,30 @@ export default function SkinDetail({ skin, onClose, onCalculateSpread }: Props) 
               </div>
             </div>
 
+            {/* Marketplaces */}
+            {d.marketplaces && d.marketplaces.length > 0 && (
+              <div className="bg-zinc-800 rounded-lg p-3">
+                <div className="text-zinc-500 text-xs mb-2">Onde comprar/vender</div>
+                <div className="space-y-1.5">
+                  {d.marketplaces.map((mp, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs">
+                      <a
+                        href={mp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`hover:underline ${mp.price !== null ? 'text-zinc-200' : 'text-zinc-500'}`}
+                      >
+                        {mp.name}
+                      </a>
+                      <span className={mp.price !== null ? 'text-emerald-400 font-medium' : 'text-zinc-600'}>
+                        {mp.price !== null ? `${mp.price.toFixed(2)}€` : '—'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Action buttons */}
             <div className="flex gap-2">
               {onCalculateSpread && (
@@ -153,12 +177,14 @@ export default function SkinDetail({ skin, onClose, onCalculateSpread }: Props) 
                   Calcular Spread
                 </button>
               )}
-              <button
-                onClick={() => window.open(`https://skinport.com/item/${skin.market_hash_name.replace(/\s+/g, '-')}`, '_blank')}
-                className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 py-2 rounded-lg text-sm transition-colors"
-              >
-                Ver na Skinport
-              </button>
+              {d.item_page && (
+                <button
+                  onClick={() => window.open(d.item_page!, '_blank')}
+                  className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 py-2 rounded-lg text-sm transition-colors"
+                >
+                  Ver na Skinport
+                </button>
+              )}
             </div>
           </div>
         )}

@@ -8,6 +8,16 @@ export interface SkinItem {
   volume: number | null
   sales: number | null
   updated_at: number | null
+  item_page?: string
+  market_page?: string
+  marketplaces?: Marketplace[]
+}
+
+export interface Marketplace {
+  name: string
+  price: number | null
+  url: string
+  type: 'min' | 'max' | 'mean' | 'external'
 }
 
 export interface SkinsResponse {
