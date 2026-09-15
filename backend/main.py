@@ -63,8 +63,9 @@ async def market_stats():
         },
         "highest_volume": {
             "name": highest_volume["market_hash_name"],
-            "volume": highest_volume["volume"],
+            "volume": highest_volume["volume"] or 0,
         },
+        "avg_mean_price": round(sum(s.get("mean_price") or 0 for s in prices) / len(prices), 2),
     }
 
 
@@ -77,7 +78,7 @@ async def top_spreads(limit: int = 10):
         if (
             data["min_price"] and data["max_price"]
             and data["max_price"] > data["min_price"]
-            and data["max_price"] < data["min_price"] * 50
+            and data["max_price"] < data["min_price"] * 200
             and (data.get("volume") or 0) > 0
         ):
             spread_pct = ((data["max_price"] - data["min_price"]) / data["min_price"]) * 100
@@ -85,6 +86,7 @@ async def top_spreads(limit: int = 10):
                 "market_hash_name": data["market_hash_name"],
                 "min_price": data["min_price"],
                 "max_price": data["max_price"],
+                "mean_price": data.get("mean_price"),
                 "spread_pct": round(spread_pct, 1),
                 "spread_value": round(data["max_price"] - data["min_price"], 2),
                 "volume": data["volume"],

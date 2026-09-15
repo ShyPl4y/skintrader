@@ -33,7 +33,9 @@ def extract_price_data(item: dict) -> dict:
         "suggested_price": item.get("suggested_price"),
         "min_price": item.get("min_price"),
         "max_price": item.get("max_price"),
+        "mean_price": item.get("mean_price"),
         "median_price": item.get("median_price"),
-        "volume": item.get("volume"),
+        "volume": item.get("quantity"),
         "sales": item.get("sales"),
+        "updated_at": item.get("updated_at"),
     }
